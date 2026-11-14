@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Second Brain</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <strong><span class="logo">♧</span> Second Brain</strong
+      ><span class="index-state">● Chỉ mục RAG chưa triển khai</span
+      ><button id="settings" title="Thông tin phiên bản">⚙</button>
+    </header>
+    <main>
+      <section id="universe">
+        <div class="tools">
+          <input
+            id="search"
+            placeholder="⌕  Tìm tài liệu…"
+            aria-label="Tìm tài liệu"
+          /><select id="tag-filter" aria-label="Lọc tag">
+            <option value="">◇ Tag</option></select
+          ><select id="folder-filter" aria-label="Lọc thư mục">
+            <option value="">▱ Thư mục</option>
+          </select>
+        </div>
+        <svg id="graph" aria-label="Graph tài liệu"></svg>
+        <p id="empty"></p>
+        <div class="graph-controls">
+          <button id="zoom-out" title="Thu nhỏ">−</button
+          ><button id="zoom-in" title="Phóng to">＋</button
+          ><button id="fit">Vừa khung</button
+          ><button id="reset" title="Về tâm và bỏ lọc">⊙</button>
+        </div>
+      </section>
+      <aside>
+        <nav>
+          <button id="tab-docs" class="active">▤ Tài liệu</button
+          ><button id="tab-trash">♜ Thùng rác</button>
+        </nav>
+        <div id="import-tools" class="import-box">
+          <button
+            id="add"
+            class="icon-action"
+            title="Thêm file vào storage"
+            aria-label="Thêm file vào storage"
+            disabled
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 3H5v18h14V8l-5-5Zm0 0v5h5M8 14h8m-4-4v8" />
+            </svg></button
+          ><button
+            id="new-folder"
+            class="icon-action"
+            title="Tạo thư mục"
+            aria-label="Tạo thư mục"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 7V4h7l3 3h8v14H3V7Zm5 7h8m-4-4v8" />
+            </svg>
+          </button>
+        </div>
+        <div id="notice" role="status"></div>
+        <section id="details" hidden>
+          <h2>Tài liệu đã chọn</h2>
+          <h3 id="name"></h3>
+          <p id="path"></p>
+          <p id="status"></p>
+          <div class="tag-line">
+            <span>Tag:</span>
+            <div id="selected-tags"></div>
+            <button id="edit-tags">＋ Gán tag</button>
+          </div>
+          <div id="tag-editor" hidden>
+            <label for="tags">Tag cách nhau bằng dấu phẩy</label
+            ><input id="tags" /><button id="save">Lưu tag</button>
+          </div>
+          <div class="all-tags-line">
+            <span>Tất cả tag:</span>
+            <div id="all-tags"></div>
+          </div>
+          <div id="actions" class="actions"></div>
+        </section>
+        <h2 id="list-title">Thư mục & tài liệu</h2>
+        <div id="documents"></div>
+      </aside>
+    </main>
+    <footer>
+      <span id="count"></span><span id="filter-state">Không có bộ lọc</span
+      ><span class="search-mode">⌕ Tìm kiếm: Tên / tag / đường dẫn</span>
+    </footer>
+    <dialog id="preview-dialog">
+      <div class="preview-header">
+        <strong>Xem nội dung · Chỉ đọc</strong><button id="close-preview">Đóng</button>
+      </div>
+      <div id="preview-tabs"></div>
+      <div id="preview-body"></div>
+    </dialog>
+    <dialog id="import-dialog">
+      <h2>Thêm tài liệu vào kho</h2>
+      <div class="browser-toolbar">
+        <button id="browse-up">↑</button
+        ><input id="browse-path" aria-label="Đường dẫn thư mục nguồn" /><button
+          id="browse-go"
+        >
+          Đi tới
+        </button>
+      </div>
+      <div id="browse-files"></div>
+      <p id="import-summary"></p>
+      <label for="destination">Lưu vào thư mục trong storage</label
+      ><select id="destination">
+        <option value="">storage/</option>
+      </select>
+      <p id="import-error" role="status"></p>
+      <div class="dialog-actions">
+        <button id="cancel-import">Hủy</button
+        ><button id="open-import" class="primary">Open</button>
+      </div>
+    </dialog>
+    <dialog id="folder-dialog">
+      <h2>Tạo thư mục trong storage</h2>
+      <label for="folder-parent">Thư mục cha</label
+      ><select id="folder-parent"></select
+      ><label for="folder-name">Tên thư mục mới</label><input id="folder-name" />
+      <p id="folder-error" role="status"></p>
+      <button id="cancel-folder">Hủy</button
+      ><button id="create-folder" class="primary">Tạo</button>
+    </dialog>
+    <div id="trash-menu" role="menu" hidden></div>
+    <script src="app.js"></script>
+    <script src="import-ui.js"></script>
+  </body>
+</html>

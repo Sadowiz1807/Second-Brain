@@ -1,0 +1,4 @@
+# Rules
+- khi code các file units test phải được đặt trong thưc mục "D:\SecondBrain\tests". Không đặt các file test ngoài thưc mục chính dự án
+- tình trạng dự án phải đồng bộ với tài liệu kiến trúc dự án hoặc contract. Nếu user đưa ra yêu cầu thay đổi hoặc cải thiện, cho phép agent sửa tài liệu để đồng bộ.
+- Ưu tiên code dễ đọc, review và debug hơn sự ngắn gọn. Mỗi câu lệnh đặt trên một dòng; không gộp nhiều thao tác hoặc nhánh điều kiện vào một dòng. Xuống dòng với danh sách tham số, biểu thức và chuỗi gọi hàm dài; dùng dòng trống để tách các bước xử lý. Tách logic phức tạp thành biến trung gian có tên rõ nghĩa để dễ đặt breakpoint và kiểm tra giá trị. Tuân thủ formatter của dự án, tránh xuống dòng vụn vặt không cần thiết.

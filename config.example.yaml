@@ -1,0 +1,5 @@
+schema_version: 1
+data_dir: .sb-data
+embedding:
+  provider: disabled
+agents: {}

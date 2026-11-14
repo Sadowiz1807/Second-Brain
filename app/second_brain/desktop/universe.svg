@@ -1,0 +1,61 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1400"
+  height="1200"
+  viewBox="0 0 1400 1200"
+>
+  <defs>
+    <filter id="nebula" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency=".008 .016"
+        numOctaves="5"
+        seed="17"
+      />
+      <feColorMatrix values=".5 0 0 0 .02 0 .15 0 0 0 0 0 .9 0 .06 0 0 0 1 0" />
+      <feGaussianBlur stdDeviation=".6" />
+    </filter>
+    <radialGradient id="fade">
+      <stop stop-color="white" />
+      <stop offset=".45" stop-color="#ddd" />
+      <stop offset="1" stop-color="black" />
+    </radialGradient>
+    <mask id="cloud">
+      <rect width="1400" height="1200" fill="black" />
+      <ellipse
+        cx="280"
+        cy="660"
+        rx="300"
+        ry="730"
+        transform="rotate(33 280 660)"
+        fill="url(#fade)"
+      />
+      <ellipse
+        cx="1060"
+        cy="500"
+        rx="310"
+        ry="810"
+        transform="rotate(29 1060 500)"
+        fill="url(#fade)"
+      />
+    </mask>
+    <pattern id="stars" width="173" height="137" patternUnits="userSpaceOnUse">
+      <circle cx="9" cy="18" r=".7" fill="#a8c4ff" />
+      <circle cx="93" cy="103" r=".5" fill="#fff" />
+      <circle cx="140" cy="53" r=".8" fill="#9eaeff" />
+      <circle cx="61" cy="61" r=".4" fill="#fff" />
+      <circle cx="119" cy="17" r=".4" fill="#c6b4ff" />
+    </pattern>
+    <pattern id="dust" width="257" height="231" patternUnits="userSpaceOnUse">
+      <circle cx="24" cy="74" r="1" fill="#91a4fa" />
+      <circle cx="181" cy="176" r=".7" fill="#bdd8ff" />
+      <circle cx="110" cy="21" r=".5" fill="#fff" />
+    </pattern>
+  </defs>
+  <rect width="1400" height="1200" fill="#030617" />
+  <g mask="url(#cloud)" opacity=".75">
+    <rect width="1400" height="1200" filter="url(#nebula)" />
+  </g>
+  <rect width="1400" height="1200" fill="url(#stars)" opacity=".65" />
+  <rect width="1400" height="1200" fill="url(#dust)" opacity=".8" />
+</svg>
