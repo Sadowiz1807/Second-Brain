@@ -135,87 +135,7 @@ function render() {
   $('empty').textContent = state.documents.length
     ? 'Không có tài liệu khớp bộ lọc.'
     : 'Thêm file đầu tiên để thắp sáng vũ trụ tri thức.';
-  const graph = $('graph');
-  graph.replaceChildren();
-  const defs = el('defs');
-  const filter = el('filter', {
-    id: 'glow',
-    x: '-150%',
-    y: '-150%',
-    width: '400%',
-    height: '400%',
-  });
-  filter.append(el('feGaussianBlur', { stdDeviation: 5 }));
-  defs.append(filter);
-  graph.append(defs);
-  const layer = el('g', { transform: `translate(${pan.x} ${pan.y}) scale(${scale})` });
-  graph.append(layer);
-  const w = graph.clientWidth;
-  const h = graph.clientHeight;
-  const points = new Map(
-    docs.map((d, i) => {
-      const a = i * 2.39996;
-      const r =
-        Math.sqrt((i + 0.5) / Math.max(1, docs.length)) * Math.min(w * 0.35, h * 0.34);
-      return [d.id, { x: w / 2 + Math.cos(a) * r, y: h / 2 + Math.sin(a) * r }];
-    }),
-  );
-  for (const edge of state.edges) {
-    const a = points.get(edge.source);
-    const b = points.get(edge.target);
-    if (a && b) {
-      layer.append(el('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'edge' }));
-    }
-  }
-  for (const d of docs) {
-    const p = points.get(d.id);
-    const g = el('g', {
-      transform: `translate(${p.x} ${p.y})`,
-      class: 'node',
-      tabindex: 0,
-      role: 'button',
-      'aria-label': d.name,
-    });
-    g.append(
-      el('circle', { r: 15, class: 'halo' }),
-      el('path', {
-        d: 'M0 -22 L3 -3 L22 0 L3 3 L0 22 L-3 3 L-22 0 L-3 -3Z',
-        class: 'ray',
-      }),
-      el('circle', { r: 4, class: 'core' }),
-    );
-    if (selected === d.id) {
-      g.append(el('circle', { r: 24, class: 'selection' }));
-    }
-    const text = d.name.length > 28 ? d.name.slice(0, 26) + '…' : d.name;
-    g.append(
-      el('rect', {
-        x: 17,
-        y: -29,
-        width: text.length * 7.2 + 16,
-        height: 25,
-        class: 'label',
-      }),
-    );
-    const label = el('text', { x: 25, y: -12 });
-    label.textContent = text;
-    g.append(label);
-    const title = el('title');
-    title.textContent = d.path;
-    g.append(title);
-    g.onclick = (e) => {
-      e.stopPropagation();
-      trashMode = false;
-      tabs();
-      select(d.id);
-    };
-    g.onkeydown = (e) => {
-      if (e.key === 'Enter') {
-        select(d.id);
-      }
-    };
-    layer.append(g);
-  }
+  renderGraph(docs);
   if (typeof renderTree === 'function') {
     renderTree(trashMode ? current() : docs);
   }
@@ -304,7 +224,7 @@ $('folder-filter').onchange = render;
 $('fit').onclick = () => {
   scale = 1;
   pan = { x: 0, y: 0 };
-  render();
+  updateGraphTransform();
 };
 $('reset').onclick = () => {
   $('search').value = '';
@@ -314,7 +234,7 @@ $('reset').onclick = () => {
 };
 function zoom(f) {
   scale = Math.max(0.3, Math.min(4, scale * f));
-  render();
+  updateGraphTransform();
 }
 $('zoom-in').onclick = () => zoom(1.2);
 $('zoom-out').onclick = () => zoom(1 / 1.2);
@@ -333,7 +253,7 @@ $('graph').onpointerdown = (e) => {
 $('graph').onpointermove = (e) => {
   if (drag) {
     pan = { x: e.clientX - drag.x, y: e.clientY - drag.y };
-    render();
+    updateGraphTransform();
   }
 };
 $('graph').onpointerup = () => {

@@ -5,6 +5,7 @@ import os
 import sqlite3
 import unicodedata
 import uuid
+from .locking import serialized_write
 
 SUPPORTED = {
     ".txt",
@@ -64,6 +65,7 @@ class Catalog:
         db.execute("PRAGMA foreign_keys=ON")
         return db
 
+    @serialized_write
     def register(self, path: str):
         source = Path(path).expanduser().resolve(strict=True)
         if not source.is_file():
@@ -87,6 +89,7 @@ class Catalog:
             )
         return {"id": identifier, "duplicate": False}
 
+    @serialized_write
     def set_tags(self, identifier: str, tags: list[str]):
         normalized = normalize_tags(tags)
         with self.connect() as db:

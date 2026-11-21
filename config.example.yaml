@@ -2,4 +2,10 @@ schema_version: 1
 data_dir: .sb-data
 embedding:
   provider: disabled
-agents: {}
+# Add a profile explicitly to your real config.yaml before starting MCP.
+# Missing permissions default to false. Never grant delete casually: it includes purge.
+agents:
+  reader:
+    read: true
+    edit: false
+    delete: false

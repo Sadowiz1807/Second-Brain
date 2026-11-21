@@ -9,6 +9,7 @@ import hashlib
 import os
 import shutil
 import uuid
+from .locking import serialized_write
 
 
 def digest(path):
@@ -65,6 +66,7 @@ class Lifecycle:
             raise ValueError("Không tìm thấy tài liệu")
         return dict(row)
 
+    @serialized_write
     def perform(self, identifier, action, destination=None):
         if action not in ("trash", "restore", "purge"):
             raise ValueError("Thao tác không hợp lệ")
@@ -161,6 +163,7 @@ class Lifecycle:
     def unregister(self, identifier):
         self.perform(identifier, "trash")
 
+    @serialized_write
     def relink(self, identifier, path):
         from .catalog import SUPPORTED
         from .storage import contained

@@ -16,6 +16,20 @@ Contract đã chốt được ưu tiên hơn đề xuất kỹ thuật chưa duy
 
 ## 2. Các contract đã chốt
 
+### C21 — Change background
+
+- Nút `Change background` trên graph mở hộp chọn ảnh của OS.
+- Copy ảnh vào thư mục appearance riêng trong data directory; không đăng ký tài liệu, không đưa vào storage/trash.
+- Chỉ thay/xóa vĩnh viễn bản background tùy chỉnh SB quản lý sau khi ảnh mới lưu thành công. Không xóa ảnh nguồn user chọn hoặc nền mặc định trong source.
+- Lưu lựa chọn qua restart. Ảnh lỗi/hủy picker giữ nguyên nền cũ.
+- Implementation: PNG/JPG/JPEG/WebP/BMP/GIF, tối đa 25 MB/20 triệu pixel; chuẩn hóa PNG RGB tĩnh (frame đầu với ảnh động), dùng replace nguyên tử cho một file background.png.
+
+
+### C20 — Mốc MCP catalog (phạm vi user chọn)
+
+Triển khai MCP cho kho hiện có trước; không gộp embedding/RAG vào lượt này. Lệnh `sb mcp --profile NAME`, stdio local và quyền read/edit/delete giữ nguyên. Contract tool, phân trang, config reload và giới hạn triển khai công bố tại [MCP.md](MCP.md). Một số thao tác folder/journal chưa expose qua MCP; không gọi đây là hoàn thành toàn bộ mục tiêu UI + MCP + RAG.
+
+
 ### C19 — Native picker, cây thư mục và icon (thay thế luồng nhập C18)
 
 - Nút thêm gọi hộp chọn file OS; không có trình duyệt nguồn tự xây. Nút thêm trên toolbar nhập thẳng storage/.

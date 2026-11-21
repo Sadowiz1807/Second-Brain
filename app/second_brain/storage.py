@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import shutil
 import hashlib
+from .locking import serialized_write
 
 
 def contained(path, root):
@@ -63,6 +64,7 @@ class Storage:
             )
         return sorted(result)
 
+    @serialized_write
     def create_folder(self, relative):
         target = contained(self.root / relative, self.root)
         if Path(relative).is_absolute() or ".." in Path(relative).parts:
@@ -70,6 +72,7 @@ class Storage:
         target.mkdir(parents=True, exist_ok=False)
         return str(target.relative_to(self.root))
 
+    @serialized_write
     def import_file(self, source, relative=""):
         from .catalog import SUPPORTED
 
@@ -111,6 +114,7 @@ class Storage:
                 target.unlink(missing_ok=True)
             raise
 
+    @serialized_write
     def import_folder(self, source, relative=""):
         source = Path(source)
         if source.is_symlink() or not source.is_dir():

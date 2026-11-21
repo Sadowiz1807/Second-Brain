@@ -4,6 +4,7 @@ from pathlib import Path
 import os
 import uuid
 from .storage import contained
+from .locking import serialized_write
 
 
 class Folders:
@@ -14,6 +15,7 @@ class Folders:
                 "CREATE TABLE IF NOT EXISTS folder_trash (id TEXT PRIMARY KEY, original TEXT NOT NULL, stored TEXT NOT NULL, state TEXT NOT NULL)"
             )
 
+    @serialized_write
     def trash(self, relative):
         source = contained(self.storage.root / relative, self.storage.root)
         if not source.is_dir():
@@ -77,6 +79,7 @@ class Folders:
                 "UPDATE folder_trash SET state='ready' WHERE id=?", (identifier,)
             )
 
+    @serialized_write
     def restore(self, identifier):
         with self.catalog.connect() as db:
             row = db.execute(
