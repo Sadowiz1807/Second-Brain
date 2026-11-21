@@ -1,5 +1,36 @@
 # Implementation status — 09/11/2026
 
+## Change background
+
+- Thêm nút đúng tên trên thanh điều khiển graph, gọi OS picker lọc ảnh. Python Background validate/decode trước, ghi tạm + fsync + os.replace vào `.sb-data/appearance/background.png` dưới shared lock. Bản cũ bị thay vĩnh viễn, không dùng trash; nguồn và universe.svg giữ nguyên.
+- Frontend tải nền đã lưu khi mở UI, cập nhật sau chọn; hủy/lỗi không thay nền. Giới hạn và ảnh động ghi ở C21.
+- 23 tests passed, gồm thay nền/persistence/bảo toàn nguồn/ảnh hỏng giữ nền cũ; desktop smoke Windows pass. Chưa tự động kiểm thử thao tác native picker end-to-end hoặc Linux.
+
+## MCP shared lock và thư mục — 14/11/2026
+
+- Thêm `locking.py`/filelock: service mutations của UI/MCP dùng chung khóa data directory, reentrant; MCP khóa cả tool request và recheck quyền sau khi lấy khóa.
+- Journal pending chặn mọi mutation, có tool read `get_recovery_status`; không tự suy đoán/xóa dữ liệu để phục hồi. Chưa có automatic recovery hoặc purge folder.
+- Thêm MCP import_folder, trash_folder, list_trash_folders, restore_folder; stdio integration test cover cây thư mục và bảo toàn nguồn. Có test multiprocessing xác nhận contender bị chặn và khóa được giải phóng.
+- 21 tests passed, UI smoke Windows pass. Chưa test Linux, crash tại mọi điểm I/O, hoặc writer ngoài SB. UI read snapshots không khóa cùng transaction filesystem, có thể tạm hiển thị trạng thái thay đổi; mutations đã serialize. Batch import báo cáo chưa phân trang.
+
+## MCP catalog stdio — 14/11/2026
+
+- User chọn MCP kho hiện có trước, không triển khai RAG trong lượt này. `sb mcp --profile NAME` chạy headless stdio bằng MCP SDK 1.30.0.
+- Tools đọc metadata/text có phân trang, tag/graph/folders, import một file, tạo folder, sửa tag, refresh/relink, trash/restore/purge file. Chính sách read/edit/delete reload config mỗi request, fail closed; không tự cấp profile vào config thật.
+- Kiểm thử ClientSession SDK với subprocess stdio thật, config/storage tạm: initialize, discovery, import, search/tag, đọc phân trang, revoke delete, restore/purge bảo toàn nguồn, traversal và YAML lỗi. Toàn suite 20 tests pass, UI smoke pass.
+- Hướng dẫn client/permission/error/giới hạn tại `docs/MCP.md`. Chưa kiểm thử kết nối app client bên ngoài (Claude/Cursor/Pi), Linux, multi-process writer. Chưa expose folder deletion/restore, recursive import hoặc journal recovery qua MCP; chưa có lock file liên tiến trình. Không coi catalog MCP là hoàn thành sản phẩm/RAG.
+
+## Icon và node ngôi sao — 14/11/2026
+
+- Đã đo WebView trước sửa: button 34×34 CSS px, display block, SVG 22×22. Sau sửa: vùng bấm 34×34, flex căn giữa, SVG 17×17; hai icon chung style. Hợp nhất `.import-box`, bỏ các override !important của toolbar.
+- Graph tách sang `desktop/graph.js`: gradient radial dùng chung, core r=2.8, near glow/halo và tia ellipse mảnh, không blur/drop-shadow từng node. Hit target trong suốt r=17; vòng chọn cyan r=12 và focus nét đứt.
+- Cạnh mảnh non-scaling, nhấn cạnh liên quan và giảm cạnh khác. Nhãn mặc định chỉ hiện ở <=12 node và zoom >=0.8; hover/focus/selected vẫn hiện. Tooltip giữ tên đầy đủ. Layout và quan hệ tag không thay đổi.
+- Pan/zoom chỉ cập nhật transform, không dựng lại graph/tree; node/label được inverse-scale để giữ kích thước màn hình. Chọn node chỉ cập nhật class khi dữ liệu/viewport không đổi, giữ focus.
+- Kiểm chứng bằng pywebview thật, fixture trong RAM, không dùng kho thật: ảnh cùng cửa sổ 1280×800 và cùng 9 tài liệu tại `tests/artifacts/before/selected.png`, `tests/artifacts/after/selected.png`; 80 node tại `tests/artifacts/after/dense.png`.
+- `tests/ui_visual_check.py`: computed styles, hit testing cách tâm 10px, node DOM identity/focus giữ sau zoom, core rộng ~5.6px sau zoom, Space chọn node đồng bộ panel, pan không thay node, lọc còn 1 node đều pass. 19 pytest pass; desktop smoke pass; ESLint pass. Đây là DOM interaction trong WebView, không phải automation thao tác chuột người thật.
+- DPI thực tế máy 100%; đã kiểm tra thêm WebView2 force-device-scale-factor 1.25/1.5, báo devicePixelRatio tương ứng và cùng metrics CSS, ảnh tại `tests/artifacts/scale125`/`scale150`. Không đổi DPI Windows, chưa kiểm tra multi-monitor/native DPI thực 125/150%.
+- Chưa kiểm chứng native picker end-to-end trong lượt này (binding nativeAdd/choose_files giữ nguyên), hover bằng chuột thật, tooltip OS, benchmark tải lớn hoặc Linux. Không thay backend/import/storage/tag/trash.
+
 ## Refactor readability — 14/11/2026
 
 - Áp dụng rule coding mới cho toàn bộ Python trong app/tests và HTML/CSS/JS/SVG của desktop: format đa dòng, block điều kiện/loop rõ, khai báo biến riêng.

@@ -13,10 +13,19 @@ def main():
     parser.add_argument("--config", help="Đường dẫn config.yaml")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("run", help="Mở cửa sổ Second Brain")
+    mcp_parser = sub.add_parser("mcp", help="Chạy MCP stdio, không mở UI")
+    mcp_parser.add_argument(
+        "--profile", required=True, help="Agent profile trong config.yaml"
+    )
     sub.add_parser("doctor", help="Kiểm tra cấu hình và runtime, không mở UI")
     args = parser.parse_args()
     try:
         settings = load_settings(args.config)
+        if args.command == "mcp":
+            from .mcp_server import create_server
+
+            create_server(settings, args.profile).run(transport="stdio")
+            return 0
         if args.command == "doctor":
             import importlib.metadata
 
@@ -58,7 +67,30 @@ def launch(settings):
 
     folders = Folders(catalog, storage, lifecycle)
 
+    from .background import Background
+
+    background = Background(settings.data_dir)
+
     class Bridge:
+        def get_background(self):
+            try:
+                return {"ok": True, "image": background.current()}
+            except Exception as exc:
+                return {"ok": False, "error": str(exc)}
+
+        def change_background(self):
+            try:
+                paths = window.create_file_dialog(
+                    webview.FileDialog.OPEN,
+                    allow_multiple=False,
+                    file_types=("Images (*.png;*.jpg;*.jpeg;*.webp;*.bmp;*.gif)",),
+                )
+                if not paths:
+                    return {"ok": True, "cancelled": True}
+                return {"ok": True, "image": background.replace(Path(paths[0]))}
+            except Exception as exc:
+                return {"ok": False, "error": str(exc)}
+
         def browse_import(self, location=None):
             try:
                 return {"ok": True, "data": picker.browse(location)}
