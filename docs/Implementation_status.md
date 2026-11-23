@@ -1,5 +1,13 @@
 # Implementation status — 09/11/2026
 
+## Repo launcher global trên Windows
+
+- Thêm `bin/sb.cmd`, `scripts/setup.ps1`, `scripts/uninstall.ps1`. Setup chỉ cài dependencies và đăng ký repo/bin vào user PATH, không cài editable SB. Launcher tự resolve source theo vị trí file, không phụ thuộc cwd.
+- Đã xác minh editable cũ trỏ file:///D:/SecondBrain, sau đó gỡ riêng second-brain-local bằng pip. Không xóa Python/dependencies trong AppData.
+- Đã chạy setup; kiểm tra từ TEMP với PATH reload: `where sb` chỉ tới D:\SecondBrain\bin\sb.cmd; `sb doctor` resolve đúng config/data. Terminal/client đang mở cần khởi động lại để nhận PATH mới.
+- Chưa kiểm thử máy sạch tải GitHub, Linux, hoặc client MCP chạy batch trực tiếp. Client Windows không hỗ trợ .cmd cần dùng cmd.exe /d /c hoặc Python với PYTHONPATH trỏ repo/app.
+
+
 ## Change background
 
 - Thêm nút đúng tên trên thanh điều khiển graph, gọi OS picker lọc ảnh. Python Background validate/decode trước, ghi tạm + fsync + os.replace vào `.sb-data/appearance/background.png` dưới shared lock. Bản cũ bị thay vĩnh viễn, không dùng trash; nguồn và universe.svg giữ nguyên.

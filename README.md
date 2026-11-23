@@ -47,7 +47,7 @@ Với Git đã được cài đặt, quy trình lấy source và cài package l�
 ```sh
 git clone https://github.com/Sadowiz1807/Second-Brain.git
 cd Second-Brain
-python -m pip install -e .
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\setup.ps1
 ```
 
 `python` trong ví dụ là executable của môi trường Python được chọn để cài SB. Trên hệ thống dùng tên `python3`, lệnh tương ứng cần thay bằng `python3`. MCP client phải sử dụng executable SB hoặc Python thuộc đúng môi trường đã cài package.
@@ -77,7 +77,11 @@ Trong các ví dụ bên dưới, `<CONFIG_PATH>` là **đường dẫn tuyệt 
 
 ### Lệnh sử dụng
 
-Khi thư mục chứa entry point `sb` thuộc PATH của tiến trình gọi, các lệnh có thể chạy từ bất kỳ thư mục làm việc nào:
+Trên Windows, script setup cài dependencies và thêm `bin` của repo vào PATH tài khoản; không tạo launcher trong AppData hoặc cài package editable. Terminal mới có thể chạy `sb run` từ mọi thư mục. Launcher `bin/sb.cmd` tự tìm source/config tại repo; không hard-code đường dẫn máy phát triển. Python và dependencies vẫn có thể ở AppData nếu Python được cài tại đó.
+
+Gỡ đăng ký bằng `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\uninstall.ps1`. Script chỉ gỡ PATH của repo, không xóa dữ liệu hoặc Python. Khi chuyển repo, gỡ ở vị trí cũ rồi chạy setup tại vị trí mới. `SB_PYTHON` có thể trỏ tới Python executable được chọn.
+
+Khi PATH của tiến trình gọi đã cập nhật, các lệnh có thể chạy từ bất kỳ thư mục làm việc nào:
 
 ```sh
 sb --config "<CONFIG_PATH>" run
